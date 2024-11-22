@@ -122,7 +122,7 @@ public abstract class SqlRepository<TId, TEntity> : IRepository<TId, TEntity> wh
     private async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         DbSet.Attach(entity);
-        if (entity is IConcurrencyEntity obj) { obj.Revision ++; }
+        if (entity is IConcurrencyEntity obj) { obj.Revision++; }
         DbContext.Entry(entity).State = EntityState.Modified;
         await DbContext.SaveChangesAsync(requestContext.UserId, cancellationToken);
         return entity;
