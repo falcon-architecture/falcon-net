@@ -163,7 +163,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub Packages Task
-        uses: ./gh-actions/dotnet/github/publish
+        uses: ./gh-actions/dotnet/publish/github
         with:
           solution-path: ./Falcon.sln
           dotnet-version: ${{ matrix.dotnet-version }}
@@ -191,7 +191,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Nuget Packages Task
-        uses: ./gh-actions/dotnet/nuget/publish
+        uses: ./gh-actions/dotnet/publish/nuget
         with:
           solution-path: ./Falcon.sln
           dotnet-version: ${{ matrix.dotnet-version }}
