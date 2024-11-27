@@ -10,7 +10,7 @@ on:
       - "master"
     paths-ignore: ["docfx", "samples", ".github"]
   release:
-    types: [created, published, released, prereleased, deleted]
+    types: [published, deleted]
   workflow_dispatch:
     inputs:
       codeql:
