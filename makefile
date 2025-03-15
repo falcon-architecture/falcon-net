@@ -99,15 +99,15 @@ update:
 
 install:
 	dotnet tool list -g
-	-dotnet tool install -g	coverlet.console                
-	-dotnet tool install -g	docfx                           
-	-dotnet tool install -g	dotnet-counters                 
-	-dotnet tool install -g	dotnet-coverage                 
-	-dotnet tool install -g	dotnet-doc                      
-	-dotnet tool install -g	dotnet-ef                       
-	-dotnet tool install -g	dotnet-format                   
-	-dotnet tool install -g	dotnet-monitor                  
-	-dotnet tool install -g	dotnet-sonarscanner             
+	-dotnet tool install -g	coverlet.console
+	-dotnet tool install -g	docfx
+	-dotnet tool install -g	dotnet-counters
+	-dotnet tool install -g	dotnet-coverage
+	-dotnet tool install -g	dotnet-doc
+	-dotnet tool install -g	dotnet-ef
+	-dotnet tool install -g	dotnet-format
+	-dotnet tool install -g	dotnet-monitor
+	-dotnet tool install -g	dotnet-sonarscanner
 	-dotnet tool install -g	dotnet-version-cli
 	-dotnet tool install -g	swashbuckle.aspnetcore.cli
 	-dotnet tool install -g	versionize

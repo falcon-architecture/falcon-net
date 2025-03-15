@@ -2,7 +2,7 @@ namespace Falcon.Domain.Abstractions;
 
 public abstract class Entity<TId>
 {
-    public TId Id { get; set; }
+    public required TId Id { get; set; }
 
     private readonly List<DomainEvent> _domainEvents = new();
 

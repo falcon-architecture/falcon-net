@@ -12,7 +12,7 @@ public class ContractException : Exception
     {
         if (info is null)
             throw new ArgumentNullException(nameof(info));
-        
+
         base.GetObjectData(info, context);
     }
 }
