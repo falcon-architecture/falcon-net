@@ -3,9 +3,10 @@ namespace Falcon.Application.Abstractions.Services;
 public class CommandService<TId, TEntity> : ApplicationService<TId, TEntity> where TEntity : class, IEntity<TId>, new()
 {
     public CommandService(IServiceProvider serviceProvider) : base(serviceProvider) { }
-    public Task<TEntity> CreateAsync(ICommandRequest<TEntity> request, CancellationToken cancellationToken)
+    public async Task<TEntity> CreateAsync(ICommandRequest<TEntity> request, CancellationToken cancellationToken)
     {
-        return GetRepository().CreateAsync(request, cancellationToken);
+        ValidateAsync<TEntity>(request.Data);
+        return await GetRepository().CreateAsync(request, cancellationToken);
     }
 
     public Task<TEntity> DeleteAsync(TId id, CancellationToken cancellationToken)
@@ -20,6 +21,18 @@ public class CommandService<TId, TEntity> : ApplicationService<TId, TEntity> whe
 
     public Task<TEntity> UpdateAsync(TId id, ICommandRequest<TEntity> request, CancellationToken cancellationToken)
     {
+        ValidateAsync<TEntity>(request.Data);
         return GetRepository().UpdateAsync(id, request, cancellationToken);
+    }
+
+    protected void ValidateAsync<T>(T entity)
+    {
+        var _validator = GetService<IValidator<T>>();
+        var validationResult = _validator.Validate(entity);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join(", ", validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage }));
+            throw new ValidationException(errors);
+        }
     }
 }

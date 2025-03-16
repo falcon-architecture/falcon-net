@@ -9,6 +9,9 @@ global using Microsoft.Extensions.Configuration;
 
 global using Newtonsoft.Json.Linq;
 
+global using FluentValidation;
+global using FluentValidation.AspNetCore;
+
 global using Falcon.Contracts;
 global using Falcon.Domain.Abstractions.Interfaces.Entities;
 global using Falcon.Domain.Abstractions.Interfaces.Repositories;

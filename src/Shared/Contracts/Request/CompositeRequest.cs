@@ -6,7 +6,7 @@ public class CompositeRequest : ICompositeRequest
     {
         Requests = [];
     }
-    public Dictionary<string, IApiRequest>? Requests { get; set; }
+    public Dictionary<string, IApiRequest> Requests { get; set; }
 }
 
 public static partial class Extensions
