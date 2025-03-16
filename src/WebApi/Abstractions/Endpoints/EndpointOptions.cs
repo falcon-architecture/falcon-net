@@ -1,4 +1,4 @@
-namespace Falcon.Application.Abstractions.Endpoints;
+namespace Falcon.WebApi.Abstractions.Endpoints;
 
 public class EndpointOptions
 {

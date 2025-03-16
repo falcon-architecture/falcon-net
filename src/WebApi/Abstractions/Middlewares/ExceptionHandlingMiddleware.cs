@@ -1,4 +1,4 @@
-namespace Falcon.Infrastructure.Abstractions.Middlewares;
+namespace Falcon.WebApi.Abstractions.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {
@@ -26,12 +26,18 @@ public class ExceptionHandlingMiddleware
 
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
+        var problemDetails = new ProblemDetails
+        {
+            Title = "An unexpected error occurred.",
+            Status = (int)HttpStatusCode.InternalServerError,
+            Detail = exception.Message,
+            Instance = context.Request.Path
+        };
+
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        ErrorResponse errorResponse = new ErrorResponse.Builder()
-            .Message("An error occurred while processing your request.")
-            .FromException(exception)
-            .Build();
-        return context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        context.Response.StatusCode = problemDetails.Status.Value;
+
+        var response = JsonSerializer.Serialize(problemDetails);
+        return context.Response.WriteAsync(response);
     }
 }

@@ -1,4 +1,4 @@
-namespace Falcon.Application.Abstractions;
+namespace Falcon.WebApi.Abstractions;
 
 public interface IEndpoints
 {

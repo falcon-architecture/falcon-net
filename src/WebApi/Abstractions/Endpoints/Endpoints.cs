@@ -1,4 +1,4 @@
-namespace Falcon.Application.Abstractions;
+namespace Falcon.WebApi.Abstractions;
 
 public abstract class Endpoints<TId, TEntity> : IEndpoints where TEntity : class, IEntity<TId>, IAggregateRoot, new()
 {
@@ -29,29 +29,30 @@ public abstract class Endpoints<TId, TEntity> : IEndpoints where TEntity : class
     public async Task<IResult> PostAsync(CommandRequest<TEntity> request, [FromServices] CommandService<TId, TEntity> service, [FromServices] LinkGenerator linkGenerator, HttpContext httpContext, CancellationToken cancellationToken)
     {
         var item = await service.CreateAsync(request, cancellationToken);
-        if (item is not null)
+        if (item is null)
         {
-            var locationUri = linkGenerator.GetPathByRouteValues(
+            return Results.Problem(new ProblemDetails
+            {
+                Title = "Resource Creation Failed",
+                Detail = "Failed to create the requested item. Check input data and try again."
+            });
+        }
+        var locationUri = linkGenerator.GetPathByRouteValues(
                 httpContext,
                 routeName: "/{id}",
                 values: new { id = item.Id }
             );
-            if (!string.IsNullOrEmpty(locationUri))
-            {
-                return TypedResults.Created(locationUri, item);
-            }
+        if (string.IsNullOrEmpty(locationUri))
+        {
             return Results.Problem(new ProblemDetails
             {
                 Title = "URI Generation Failed",
                 Detail = "Unable to generate location URI for the created resource."
             });
         }
-        return Results.Problem(new ProblemDetails
-        {
-            Title = "Resource Creation Failed",
-            Detail = "Failed to create the requested item. Check input data and try again."
-        });
+        return TypedResults.Created(locationUri, item);
+
     }
 
-    
+
 }
