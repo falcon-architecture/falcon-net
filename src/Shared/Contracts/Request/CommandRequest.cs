@@ -2,7 +2,7 @@ namespace Falcon.Contracts;
 
 public class CommandRequest<TEntity> : ICommandRequest<TEntity>
 {
-    public CommandRequest(TEntity data )
+    public CommandRequest(TEntity data)
     {
         Data = data;
     }

@@ -71,17 +71,14 @@ public abstract class SqlRepository<TId, TEntity> : IRepository<TId, TEntity> wh
         }
         return results;
     }
-    private async Task<DeletableEntityStatus> GetStats(TId id, CancellationToken cancellationToken = default)
+    private async Task<DeletableEntityStatus> GetStatusAsync(TId id, CancellationToken cancellationToken = default)
     {
-        if (id is not null)
+        var request = new QueryRequest(["id", "status"])
+                      .Where("Id", FieldOperator.Equal, id);
+        var record = (await QueryAsync(request, cancellationToken)).SingleOrDefault();
+        if (record != null && record.TryGetValue("status", out var statusValue))
         {
-            var request = new QueryRequest(["id", "status"])
-                          .Where("Id", FieldOperator.Equal, id);
-            var record = (await QueryAsync(request, cancellationToken)).SingleOrDefault();
-            if (record != null && record.TryGetValue("status", out var statusValue))
-            {
-                return (DeletableEntityStatus)statusValue.Value<int>();
-            }
+            return (DeletableEntityStatus)statusValue.Value<int>();
         }
         return DeletableEntityStatus.Deleted;
     }
@@ -110,7 +107,7 @@ public abstract class SqlRepository<TId, TEntity> : IRepository<TId, TEntity> wh
         entity.Id = id ?? throw new PersistenceException("The provided entity Id is null or invalid");
         if (entity is IDeletableEntity)
         {
-            var status = await GetStats(id, cancellationToken);
+            var status = await GetStatusAsync(id, cancellationToken);
             if (status != DeletableEntityStatus.Active)
             {
                 throw new PersistenceException($"Entity with ID '{id}' is not active and cannot be updated.");
@@ -122,7 +119,7 @@ public abstract class SqlRepository<TId, TEntity> : IRepository<TId, TEntity> wh
     private async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         DbSet.Attach(entity);
-        if (entity is IConcurrencyEntity obj) { obj.Revision ++; }
+        if (entity is IConcurrencyEntity obj) { obj.Revision++; }
         DbContext.Entry(entity).State = EntityState.Modified;
         await DbContext.SaveChangesAsync(requestContext.UserId, cancellationToken);
         return entity;
@@ -147,7 +144,7 @@ public abstract class SqlRepository<TId, TEntity> : IRepository<TId, TEntity> wh
         sourceEntity = sourceEntity ?? throw new PersistenceException($"Entity with ID '{id}' not found or has been deleted.");
         DbContext.Entry(sourceEntity).CurrentValues.SetValues(entity);
         var modifiedCount = await DbContext.SaveChangesAsync(requestContext.UserId, cancellationToken);
-        if (modifiedCount == 0) 
+        if (modifiedCount == 0)
             throw new PersistenceException("No records were replaced. The entity might not exist or has already been deleted.");
         return sourceEntity;
     }
